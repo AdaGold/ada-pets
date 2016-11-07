@@ -32,9 +32,14 @@ class PetsControllerTest < ActionController::TestCase
   end
 
   test "each pet object contains the relevant keys" do
-    keys = %w( age human id name )
+    keys = %w( age human id name ).to_set
     get :index
-    body = JSON.parse(response.body)
-    assert_equal keys, body.map(&:keys).flatten.uniq.sort
+    pets = JSON.parse(response.body)
+    pets.each.with_index do |pet, i|
+      assert_equal keys, pet.keys.to_set, "Pet ##{i} did not have exact set of keys: #{pet}"
+      pet.keys.each do |key|
+        assert_not_nil pet[key], "Pet ##{i} had a nil value for #{key}"
+      end
+    end
   end
 end
