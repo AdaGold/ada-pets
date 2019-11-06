@@ -80,8 +80,11 @@ describe PetsController do
       }
     }
     it "can create a new pet" do
+      # Act
       expect {
         post pets_path, params: pet_data
+
+      # Assert
       }.must_differ 'Pet.count', 1
 
       body = check_response(expected_type: Hash, expected_status: :created)
