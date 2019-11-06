@@ -107,7 +107,7 @@ describe PetsController do
       must_respond_with :bad_request
       # body contains errors which contain string 'name'
       body = JSON.parse(response.body)
-      expect(body['errors']).must_include 'name'
+      expect(body['errors'].keys).must_include 'name'
     end
 
   end
