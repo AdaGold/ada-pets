@@ -60,6 +60,7 @@ describe PetsController do
     it "sends back not found if the pet does not exist" do
       # Act
       get pet_path(-1)
+
       body = JSON.parse(response.body)
 
       # Assert
@@ -68,5 +69,46 @@ describe PetsController do
       expect(body).must_be_instance_of Hash
       expect(body.keys).must_include "errors"
     end
+  end
+
+  describe 'create' do
+
+    before do
+      # Create valid request
+      @pet = {
+        pet: {
+          name: "Pie",
+          human: "Clara",
+          age: 1
+        }
+      }
+    end
+
+    it 'responds with created status when request is good' do
+      # make post request to create
+      # verify count +1
+      expect{post pets_path, params: @pet}.must_differ 'Pet.count', 1
+      # check for created code
+      must_respond_with :created
+      # body contains new pet's id
+      body = JSON.parse(response.body)
+      expect(body.keys).must_equal ['id']
+      # TODO: Pet.last looks like request
+    end
+
+    it 'responds with bad_request when request has no name' do
+      # make bad request
+      no_name_pet = @pet
+      no_name_pet[:name] = nil
+      # call
+      # verify count doesn't change
+      expect{post pets_path, params: @pet}.wont_change 'Pet.count'
+      # verify bad_request status
+      must_respond_with :bad_request
+      # body contains errors which contain string 'name'
+      body = JSON.parse(response.body)
+      expect(body['errors']).must_include 'name'
+    end
+
   end
 end

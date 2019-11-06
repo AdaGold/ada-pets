@@ -11,14 +11,25 @@ class PetsController < ApplicationController
       render json: pet.as_json(only: [:id, :name, :age, :human])
       return
     else
-      render json: { ok: false, errors: ["Not Found"] }, status: :not_found
+      # head :not_found
+      render json: { errors: ["Not Found"] }, status: :not_found
       return
     end
   end
 
-  # private
+  def create
+    new_pet = Pet.new(pet_params)
+    if new_pet.save
+      render json: new_pet.as_json(only: [:id]), status: :created
+    else
+      # Do something else
+    end
+  end
 
-  #   def pet_params
-  #     params.require(:pet).permit(:name, :age, :human)
-  #   end
+  private
+
+    def pet_params
+      p params
+      params.require(:pet).permit(:name, :age, :human)
+    end
 end
